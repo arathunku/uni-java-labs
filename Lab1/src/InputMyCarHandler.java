@@ -1,5 +1,3 @@
-import java.awt.Menu;
-import java.security.PrivilegedActionException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
