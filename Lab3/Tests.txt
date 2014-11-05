@@ -1,0 +1,10 @@
+Michal;Violet;female;1990;70;3;achievements;chemistry
+michal;Violet;female;1990;70;3;achievements;chemistry
+Michal;Arath;female;1990;70;3;achievements;chemistry
+Michal;Violet;gendrer;1990;70;3;achievements;chemistry
+Michal;Violet;female;1900;70;3;achievements;chemistry
+Michal;Violet;female;1990;1100;3;achievements;chemistry
+Michal;Violet;female;1990;0;3;achievements;chemistry
+Michal;Violet;female;1990;70;-1;achievements;chemistry
+Michal;Violet;female;1990;70;3;achievements;chemistry
+Michal;Violet;female;1990;70;3;achievements;chemistryd
