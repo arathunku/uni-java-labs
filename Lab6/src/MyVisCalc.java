@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.Scanner;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 
 public class MyVisCalc {
@@ -40,8 +41,6 @@ public class MyVisCalc {
 	private List expressionsListContainer = new List(8);
 	private JLabel output = new JLabel("output");
 	private TextField expressionField = new TextField();
-	
-	private Vector<String> expressionsList = new Vector<String>(10);
 
 	private MyCalc calc = new MyCalc();
 	
@@ -183,9 +182,8 @@ public class MyVisCalc {
 	
 	private void renderExpressions() {
 		this.expressionsListContainer.removeAll();
-		int i = this.expressionsList.size() - 1;
-		for(; i >= 0; i -= 1) {
-			this.expressionsListContainer.add(this.expressionsList.get(i));
+		for (Entry<String, String> entry : this.calc.getVariables().entrySet()) {
+			this.expressionsListContainer.add(entry.getKey() +" = " + entry.getValue());
 		}
 	}
 	
@@ -202,17 +200,11 @@ public class MyVisCalc {
 			try {
 				String output = this.calc.processExpression(input);
 				setOutput(output);
-				if(this.editIndex == -1) {
-					this.storeExpression(input);
-				} else {
-					this.expressionsList.set(
-						this.expressionsList.size() - 1 - this.editIndex
-						, input
-					);
+				if(this.editIndex != -1) {
 					this.editIndex = -1;
 					this.evaluateBtn.setLabel("Evaluate");
-					this.renderExpressions();
 				}
+				this.renderExpressions();
 				this.expressionField.setText("");
 			} catch (MyCalcExceptions.UndefinedVariable | 
 					MyCalcExceptions.VariablesMaxReached |
@@ -229,19 +221,11 @@ public class MyVisCalc {
 		expressionField.requestFocus();
 		this.editIndex = this.expressionsListContainer.getSelectedIndex();
 		this.evaluateBtn.setLabel("Save");
-		this.setOutput("CAUTION! If you change variable - there might be unexpected behaviour after restore.");
 	}
 	
 	private void handleDeleteClick(ActionEvent evt) {
-		if(this.expressionsListContainer.getSelectedIndex() == -1) return;
-		this.expressionsList.remove(
-			this.expressionsList.size() - 1 - this.expressionsListContainer.getSelectedIndex()
-		);
+		this.calc.getVariables().remove(getSelectedListElement(true));
 		this.renderExpressions();
-	}
-	
-	private String getSelectedListElement() {
-		return getSelectedListElement(true);
 	}
 	
 	private String getSelectedListElement(boolean required) {
@@ -252,18 +236,14 @@ public class MyVisCalc {
 		
 		return selected;	
 	}
-	
-	private void storeExpression(String s) {
-		this.expressionsList.add(s);
-		this.renderExpressions();
-	}
+
 	
 	private void saveExpressions() {
 		PrintWriter writer = null;
 		try {
 			writer = new PrintWriter("./expressions.txt", "UTF-8");
-			for(String expression : this.expressionsList) {
-				writer.println(expression);
+			for (Entry<String, String> entry : this.calc.getVariables().entrySet()) {
+				writer.println(entry.getKey() +" = " + entry.getValue());
 			}
 		} catch (UnsupportedEncodingException | FileNotFoundException e) {
 			setOutput("There were problems with saving the file.");
@@ -284,7 +264,6 @@ public class MyVisCalc {
 				} catch (Exception e) { 
 					System.out.println("aaaaa!");
 				}
-				this.storeExpression(s);
 			}
 
 		} catch (FileNotFoundException e1) {
