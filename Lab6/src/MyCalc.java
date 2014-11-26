@@ -1,5 +1,4 @@
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -112,24 +111,5 @@ public class MyCalc {
 	
 	public HashMap<String, String> getVariables() {
 		return this.variables;
-	}
-	
-	private void printAllVariables() {
-		for (Entry<String, String> entry : this.getVariables().entrySet()) {
-		    System.out.println(entry.getKey() + " = " + entry.getValue());
-		}
-	}
-	
-	private void printKey(String key) throws MyCalcExceptions.UndefinedVariable {
-		if(this.getVariables().containsKey(key)) {
-			for (Entry<String, String> entry : this.getVariables().entrySet()) {
-				if(entry.getKey().equals(key)) {
-					System.out.println(entry.getKey() + " = " + entry.getValue());
-					break;
-				}
-			}			
-		} else {
-			throw new MyCalcExceptions.UndefinedVariable(key);
-		}
 	}
 }

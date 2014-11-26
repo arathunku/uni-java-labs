@@ -1,6 +1,11 @@
 import java.awt.EventQueue;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JToolBar;
 
 import java.awt.Container;
 import java.awt.GridBagConstraints;
@@ -11,7 +16,6 @@ import java.awt.List;
 
 import javax.swing.JPanel;
 
-import java.awt.Button;
 
 import javax.swing.JLabel;
 
@@ -22,7 +26,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.Collections;
 import java.util.Scanner;
 import java.util.Vector;
 
@@ -31,12 +34,14 @@ public class MyVisCalc {
 
 	private JFrame frame;
 
-	private Button saveBtn = new Button("Save");
-	private Button restoreBtn = new Button("Restore");
-	private Button evaluateBtn = new Button("Evaluate");
-	private Button editBtn = new Button("Edit");
-	private Button deleteBtn = new Button("Delete");
+	private JMenuItem saveItem = new JMenuItem("Save");
+	private JMenuItem restoreItem = new JMenuItem("Restore");
+	private JButton evaluateBtn = new JButton("Evaluate");
+	private JButton editBtn = new JButton("Edit Selected");
+	private JButton deleteBtn = new JButton("Delete Selected");
 	
+	private JToolBar toolbar = new JToolBar("Toolbar");
+
 	private List expressionsListContainer = new List(8);
 	private JLabel output = new JLabel("output");
 	private TextField expressionField = new TextField();
@@ -91,80 +96,71 @@ public class MyVisCalc {
 	    GridBagConstraints gbc = new GridBagConstraints();
 		
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.weightx = 0.95;
 		gbc.anchor = GridBagConstraints.NORTH;
-		gbc.ipadx = 0;
-		gbc.gridwidth = 2;
+		gbc.insets = new Insets(0, 0, 5, 5);
+		gbc.gridy = 0;
+		gbc.gridx = 1;
+		gbc.weightx = 0.5;
+		JMenuBar menuBar = new JMenuBar();
+		container.add(menuBar, gbc);
+		gbc.gridy = 1;
+		gbc.weightx = 1;
+		container.add(toolbar, gbc);
+		toolbar.setFloatable(false);
 		
-		container.add(this.expressionField, gbc);
+		gbc.gridy = 2;
+		container.add(expressionField, gbc);
 		
-		gbc.gridwidth = 1;
-		gbc.gridx = 2;
-		gbc.weightx = 0.05;
 		this.evaluateBtn.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				handleEvaluateClick(e);
 			}
 		});
 		
-		container.add(this.evaluateBtn, gbc);
+		toolbar.add(evaluateBtn, gbc);
 		
-		
-	    gbc.insets = new Insets(0, 0, 5, 5);
-		gbc.gridy = 1;
-		gbc.gridx = 0;
-		gbc.gridwidth = 3;
-		gbc.weightx = 1;
+	    
+	    gbc.gridy = 3;
 	    container.add(this.output, gbc);
 
-		gbc.gridy = 2;
-		gbc.gridx = 0;
-		gbc.gridwidth = 3;
-		gbc.weightx = 1;
+		gbc.gridy = 4;
 		container.add(this.expressionsListContainer, gbc);
 		
-		gbc.gridy = 3;
-		gbc.anchor = GridBagConstraints.CENTER;
-		gbc.gridwidth = 1;
-		
-		gbc.gridx = 0;
+
 		this.editBtn.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				handleEditClick(e);
 			}
-		});		
-		container.add(this.editBtn, gbc);
+		});	
+		toolbar.add(this.editBtn);
 
-		gbc.gridx = 2;
+
 		this.deleteBtn.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				handleDeleteClick(e);
 			}
 		});
-		container.add(this.deleteBtn, gbc);
+		toolbar.add(this.deleteBtn);
 		
-		gbc.gridy = 4;
-		gbc.anchor = GridBagConstraints.PAGE_END;
-		gbc.gridwidth = 1;
+		
 
-		gbc.insets = new Insets(10, 0, 0, 0);
-		gbc.gridx = 0;
-		this.restoreBtn.addActionListener(new ActionListener(){
+		JMenu menu = new JMenu("File");
+		
+		menuBar.add(menu);
+		
+		this.restoreItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				restoreExpressions();
 			}
 		});
-		container.add(this.restoreBtn, gbc);
+		menu.add(restoreItem);
 
-		gbc.gridx = 2;
-		this.saveBtn.addActionListener(new ActionListener(){
+		saveItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				saveExpressions();
 			}
 		});
-		container.add(this.saveBtn, gbc);
+		menu.add(saveItem);
 		
 	}
 
@@ -210,7 +206,7 @@ public class MyVisCalc {
 						, input
 					);
 					this.editIndex = -1;
-					this.evaluateBtn.setLabel("Evaluate");
+					this.evaluateBtn.setText("Evaluate");
 					this.renderExpressions();
 				}
 				this.expressionField.setText("");
@@ -228,7 +224,7 @@ public class MyVisCalc {
 		expressionField.setText(input);
 		expressionField.requestFocus();
 		this.editIndex = this.expressionsListContainer.getSelectedIndex();
-		this.evaluateBtn.setLabel("Save");
+		this.evaluateBtn.setText("Save");
 		this.setOutput("CAUTION! If you change variable - there might be unexpected behaviour after restore.");
 	}
 	
@@ -240,9 +236,6 @@ public class MyVisCalc {
 		this.renderExpressions();
 	}
 	
-	private String getSelectedListElement() {
-		return getSelectedListElement(true);
-	}
 	
 	private String getSelectedListElement(boolean required) {
 		String selected = this.expressionsListContainer.getSelectedItem();
