@@ -4,8 +4,8 @@ import java.util.Scanner;
 import java.util.Vector;
 
 public class Student { 
-	public final static int MIN_BIRTH = 1980;
-	public final static int MAX_BIRTH = 2004;
+	final static int MIN_BIRTH = 1980;
+	final static int MAX_BIRTH = 2004;
 	private final static double MIN_WEIGHT =  3.0;
 	private final static double MAX_WEIGHT =  140.0;
 	final static int MIN_STUDY_YEAR =  1;
@@ -21,8 +21,8 @@ public class Student {
 	private Faculty _faculty;
 	private int _studyYear;
 	private int _birthYear;
-	private static Vector<String> availableStudentFemaleNames = new Vector<String>(10);
-	private static Vector<String> availableStudentMaleNames = new Vector<String>(10);
+	static Vector<String> availableStudentFemaleNames = new Vector<String>(10);
+	static Vector<String> availableStudentMaleNames = new Vector<String>(10);
 
 	
 	public Student() {
@@ -64,8 +64,8 @@ public class Student {
 	private void generateUniqueId() {
 		// 0 is a default value for _id
 		if(this._id == 0) {
-			this._idCounter += 1;
-			this._id = this._idCounter;
+			Student._idCounter += 1;
+			this._id = Student._idCounter;
 		}
 	}
 	
@@ -78,7 +78,7 @@ public class Student {
 	}
 	
 	public void setLastName(String _lastName) throws StudentExceptions.InvalidLastNameException {
-		if(_lastName == null || 
+		if(_lastName == null || _lastName.length() == 0 ||
 				!_lastName.equals(_lastName.substring(0, 1).toUpperCase() + _lastName.substring(1).toLowerCase())
 		  ) {			
 			throw new StudentExceptions.InvalidLastNameException(_lastName, 0);
@@ -92,12 +92,12 @@ public class Student {
 	}
 	
 	public void setFirstName(String _firstName) throws StudentExceptions.InvalidFirstNameException {
-		this.loadNames();
+		loadNames();
 		if(this.getGender() == Gender.MALE) {
-			if(!this.availableStudentMaleNames.contains(_firstName))
+			if(!availableStudentMaleNames.contains(_firstName))
 				throw new StudentExceptions.InvalidFirstNameException(_firstName, 1);
 		} else if(this.getGender() == Gender.FEMALE) {
-			if(!this.availableStudentFemaleNames.contains(_firstName))
+			if(!availableStudentFemaleNames.contains(_firstName))
 				throw new StudentExceptions.InvalidFirstNameException(_firstName, 1);
 		}
 		this._firstName = _firstName;
@@ -180,9 +180,9 @@ public class Student {
 		}
 		
 		
-		if(studyYear < MIN_WEIGHT) {
+		if(studyYear < MIN_STUDY_YEAR) {
 			throw new ValidationExceptions.ValueTooLowException(_studyYear, MIN_STUDY_YEAR, MAX_STUDY_YEAR, 5);
-		} else if (studyYear > MAX_WEIGHT) {
+		} else if (studyYear > MAX_STUDY_YEAR) {
 			throw new ValidationExceptions.ValueTooHighException(_studyYear, MIN_STUDY_YEAR, MAX_STUDY_YEAR, 5);	
 		}
 		
@@ -217,8 +217,8 @@ public class Student {
 		this._birthYear = birthYear;
 	}
 	
-	private void loadNames() {
-		if(this.availableStudentMaleNames.size() > 0 || this.availableStudentMaleNames.size() > 0)
+	static void loadNames() {
+		if(availableStudentMaleNames.size() > 0 || availableStudentMaleNames.size() > 0)
 			return;
 		
 		Scanner fileScanner;
@@ -237,8 +237,8 @@ public class Student {
 				} else if(s.equals("Girls:")){
 					boys = false;
 				} else {
-					if(boys) this.availableStudentMaleNames.add(s);
-					else this.availableStudentFemaleNames.add(s);
+					if(boys) availableStudentMaleNames.add(s);
+					else availableStudentFemaleNames.add(s);
 				}
 			}
 		} catch (FileNotFoundException e) {
